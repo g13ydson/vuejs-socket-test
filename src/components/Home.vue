@@ -6,12 +6,12 @@
         <v-text-field v-model="room_id" :rules="room_id_rules" label="Room ID" reqired></v-text-field>
         <v-btn @click="disconnect" v-if="status === 'connected'" color="error">Disconnect</v-btn>
         <v-btn @click="connect" v-if="status === 'disconnected'" color="primary">Connect</v-btn>
-        <v-btn @click="send_message" v-if="channel_connect" class="mx-2" fab dark color="indigo">
+        <v-btn @click="send_message" v-if="status === 'connected'" class="mx-2" fab dark color="indigo">
             <v-icon dark>mdi-plus</v-icon>
           </v-btn>
         <v-card class="mx-auto" max-width="800">
           <v-textarea
-            v-if="channel_connect"
+            v-if="status === 'connected'"
             outlined
             v-model="body_message"
             :rules="body_message_rules"
@@ -44,7 +44,6 @@ export default {
   methods: {
     connect() {
       if (this.$refs.form.validate()) {
-        this.channel_connect = true;
         let socket = new Socket("ws://localhost:4000/socket", {
           params: { token: this.jwt_token }
         });
@@ -87,7 +86,6 @@ export default {
   },
   data() {
     return {
-      channel_connect: false,
       message: "",
       messages: [],
       status: "disconnected",
